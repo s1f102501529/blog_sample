@@ -22,7 +22,15 @@
     </form>
 
     <br>
-
+    {% for article in articles %}
+    <a href="{% url 'detail' article.id %}"></a>{{ article.title }}</a>
+    <small>
+        [{{ article.posted_at }}]
+    </small>
+    <div>
+        {{ article.body | linebreaksbr }}
+    </div>
+    {% endfor %}
     <p>No article.</p>
 
   </body>
