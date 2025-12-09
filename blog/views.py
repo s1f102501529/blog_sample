@@ -5,16 +5,16 @@ fortune=random.randint(1,3)
 from django.http import HttpResponse
 from django.utils import timezone
 
+from blog.models import Article
+from django.http import Http404
 def index(request):
+    if request.method == 'POST':
+         article = Article(title=request.POST['title'], body=request.POST['text'])
+         article.save()
+         return redirect(detail,article.id)
     context = {
-        "articles": [
-            {
-                "id": 1,
-                "title": "Post 01",
-                "body": "test post.\nLorem ipsum dolor sit amet, \nconsectetur adipiscing elit,\n sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n", 
-                "posted_at": timezone.now # option
-            }
-        ]
+        "articles": Article.objects.all()
+
     }
     
     return render(request, 'blog/index.html', context)
@@ -35,14 +35,29 @@ def hello(request):
 def redirect_test(request):
      return redirect(hello)
 def detail(request,article_id):
+     try:
+          article = Article.objects.get(pk=article_id)
+     except Article.DoesNotExist:
+          raise Http404("Article dose not exist")
+     
      context={
-          "article_id":article_id
+          "article":article
      }
-     return render(request,"blog/tbd.html",context)
+     return render(request,"blog/detail.html",context)
 def update(request,article_id):
+     try:
+          article = Article.objects.get(pk=article_id)
+     except Article.DoesNotExist:
+          raise Http404("Article dose not exist")
      context={
           "article_id": article_id
      }
-     return render(request,"blog/tbd.html",context)
+     return render(request,"blog/edit.html",context)
 def delete(request, article_id):
+     try:
+          article = Article.objects.get(pk=article_id)
+     except Article.DoesNotExist:
+          raise Http404("Article dose not exist")
+     article.delete()
+
      return redirect(index)
