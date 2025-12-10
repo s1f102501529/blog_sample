@@ -5,7 +5,7 @@ fortune=random.randint(1,3)
 from django.http import HttpResponse
 from django.utils import timezone
 
-from blog.models import Article
+from blog.models import Article, Comment
 from django.http import Http404
 def index(request):
     if request.method == 'POST':
@@ -40,8 +40,13 @@ def detail(request,article_id):
      except Article.DoesNotExist:
           raise Http404("Article dose not exist")
      
+     if request.method == 'POST':
+          comment = Comment(article=article, text=request.POST['text'])
+          comment.save()
+     
      context={
-          "article":article
+          "article":article,
+          'comments':article.comments.order_by('-posted_at')
      }
      return render(request,"blog/detail.html",context)
 def update(request,article_id):
