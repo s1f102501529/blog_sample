@@ -27,6 +27,11 @@
     </form>
 
     <br>
+    <div>
+      <a href="{% url 'index' %}?sort=date">Sort by Date</a>|
+      <a href="{% url 'index' %}?sort=like">Sort by Like</a>
+      
+    </div>
     {% if articles %}
     {% for article in articles %}
     <div class="text">
@@ -34,6 +39,11 @@
       <small>
         [{{ article.posted_at }}]
       </small>
+      <dev>
+        <a href="{% url 'like' article.id %}">
+          Like:{{article.like}}
+        </a>
+      </dev>
       <div>
         {{ article.body | linebreaksbr }}
       </div>

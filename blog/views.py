@@ -12,11 +12,16 @@ def index(request):
          article = Article(title=request.POST['title'], body=request.POST['text'])
          article.save()
          return redirect(detail,article.id)
+    if ('sort' in request.GET):
+         if request.GET['sort'] == 'like':
+              articles=Article.objects.order_by('-like')
+         else:
+              articles = Article.objects.order_by('-posted_at')
+    else:
+         articles=Article.objects.order_by('-posted_at')
     context = {
-        "articles": Article.objects.all()
-
+        "articles": articles
     }
-    
     return render(request, 'blog/index.html', context)
 def update(request, article_id):
 	return HttpResponse("article_id: {}".format(article_id))
@@ -66,3 +71,13 @@ def delete(request, article_id):
      article.delete()
 
      return redirect(index)
+def like(request, article_id):
+     try:
+          article = Article.objects.get(pk=article_id)
+          article.like += 1
+          article.save()
+     except Article.DoesNotExist:
+          raise Http404("Article dose not exist")
+     
+
+     return redirect(detail,article_id)
