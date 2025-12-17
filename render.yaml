@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: blog-sample-web
+    name: blog-sample-1f10250152
     env: python
     plan: free
     branch: production
